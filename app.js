@@ -18,6 +18,28 @@ var uiController = (function () {
     getDOMstrings: function () {
       return DOMstrings;
     },
+
+    addListItem: function (item, type) {
+      // Orlogo zarlagiin elementiig aguulsan html-iig beltgene.
+      var html, list;
+      if (type === "inc") {
+        list = ".income__list";
+        html =
+          ' <div class="item clearfix" id="income-%ID%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">%VALUE%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div> ';
+      } else {
+        list = ".expenses__list";
+        html =
+          ' <div class="item clearfix" id="expense-%ID%"><div class="item__description">%DESCRIPTION%</div><div class="right clearfix"><div class="item__value">%VALUE%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div> ';
+      }
+
+      // Ter HTML dotroo orlogo zarlagiin utguudiig REPLACE ashiglaj uurchilj ugnu.
+      html = html.replace("%ID%", item.id);
+      html = html.replace("%DESCRIPTION%", item.description);
+      html = html.replace("%VALUE%", item.value);
+
+      // Beltgesen HTML ee DOM ruu hiij ugnu.
+      document.querySelector(list).insertAdjacentHTML("beforeend", html);
+    },
   };
 })();
 
@@ -63,6 +85,8 @@ var financeController = (function () {
       }
 
       data.items[type].push(item);
+
+      return item;
     },
 
     seeData: function () {
@@ -78,10 +102,15 @@ var appController = (function (uiController, financeController) {
     var input = uiController.getInput();
 
     // 2. Олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална.
-
-    financeController.addItem(input.type, input.description, input.value);
+    var item = financeController.addItem(
+      input.type,
+      input.description,
+      input.value
+    );
 
     // 3. Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана.
+    uiController.addListItem(item, input.type);
+
     // 4. Төсвийг тооцоолно.
     // 5. Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
   };
